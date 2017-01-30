@@ -1,6 +1,6 @@
 import React from 'react'
-import ReactDOM from 'react-dom'
-import scroller from './scroll'
+import { findDOMNode } from 'react-dom'
+import srraf from 'srraf'
 
 function inViewport (node, threshold, scrollY) {
   const windowHeight = window.innerHeight
@@ -19,8 +19,11 @@ export default class Layzr extends React.Component {
   constructor (props) {
     super(props)
 
-    if (!this.props.src) { return console.warn('Layzr requires a src value.') }
+    if (!this.props.src) { console.warn('Layzr requires a src value.') }
 
+    /**
+     * Store values sep from state
+     */
     this.config = {
       src: this.props.src,
       threshold: this.props.threshold || 0
@@ -33,6 +36,9 @@ export default class Layzr extends React.Component {
   }
 
   setSource () {
+    /**
+     * Prioritize srcset, retina, src
+     */
     if (this.config.srcSetEnabled && this.config.srcSet) {
       this.setState({ srcSet: this.config.srcSet })
     } else {
@@ -40,25 +46,32 @@ export default class Layzr extends React.Component {
       this.setState({ src: retina || this.config.src })
     }
 
+    /**
+     * Remove handler
+     */
     if (this.scroller) {
       this.scroller.destroy()
     }
   }
 
   componentDidMount () {
-    this.config.node = ReactDOM.findDOMNode(this)
+    this.config.node = findDOMNode(this)
     this.config.srcSetEnabled = 'srcset' in document.createElement('img')
     this.config.dpr = (window.devicePixelRatio ||
       window.screen.deviceXDPI / window.screen.logicalXDPI)
 
-    this.scroller = scroller.use((curr, prev) => {
-      if (inViewport(this.config.node, this.config.threshold, curr)) {
+    this.scroller = srraf.use(({ currY }) => {
+      if (inViewport(this.config.node, this.config.threshold, currY)) {
         this.setSource()
       }
-    })
+    }).update()
   }
 
   componentWillUnmount () {
+    /**
+     * Make sure all handlers are removed
+     * even if the image was never inViewport
+     */
     if (this.scroller) {
       this.scroller.destroy()
     }
@@ -68,4 +81,3 @@ export default class Layzr extends React.Component {
     return React.cloneElement(this.props.children, this.state)
   }
 }
-
