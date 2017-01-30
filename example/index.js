@@ -4,7 +4,7 @@ import Layzr from 'react-layzr'
 
 render(
   <div>
-    <Layzr src="http://unsplash.it/2000/1333">
+    <Layzr src="http://unsplash.it/2000/1333" srcSet="http://unsplash.it/3000/1333">
       <img/>
     </Layzr>
   </div>,

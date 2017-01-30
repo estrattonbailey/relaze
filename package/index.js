@@ -2,12 +2,17 @@ import React from 'react'
 import { findDOMNode } from 'react-dom'
 import srraf from 'srraf'
 
-function inViewport (node, threshold, scrollY) {
+/**
+ * @param {HTMLElement} node
+ * @param {number} threshold Pixels outside viewport to fire
+ * @param {number} y Current page scroll position
+ */
+function inViewport (node, threshold, y) {
   const windowHeight = window.innerHeight
-  const viewTop = scrollY
+  const viewTop = y
   const viewBot = viewTop + windowHeight
 
-  const nodeTop = node.getBoundingClientRect().top + scrollY
+  const nodeTop = node.getBoundingClientRect().top + y
   const nodeBot = nodeTop + node.offsetHeight
 
   const offset = (threshold / 100) * windowHeight
@@ -15,22 +20,25 @@ function inViewport (node, threshold, scrollY) {
   return (nodeBot >= viewTop - offset) && (nodeTop <= viewBot + offset)
 }
 
+/**
+ * @param {number} threshold Pixels outside viewport to fire
+ * @param {string} src Default image src
+ * @param {string} [srcSet] valid HTML srcset value
+ * @param {string} [retina] High DPI image (prefer srcSet)
+ */
 export default class Layzr extends React.Component {
   constructor (props) {
     super(props)
-
-    if (!this.props.src) { console.warn('Layzr requires a src value.') }
 
     /**
      * Store values sep from state
      */
     this.config = {
       src: this.props.src,
-      threshold: this.props.threshold || 0
+      threshold: this.props.threshold || 0,
+      srcSet: this.props.srcSet || null,
+      retina: this.props.retina || null,
     }
-
-    if (this.props.retina) { this.config.retina = this.props.retina }
-    if (this.props.srcSet) { this.config.srcSet = this.props.srcSet }
 
     this.state = {}
   }
@@ -40,10 +48,14 @@ export default class Layzr extends React.Component {
      * Prioritize srcset, retina, src
      */
     if (this.config.srcSetEnabled && this.config.srcSet) {
-      this.setState({ srcSet: this.config.srcSet })
+      this.setState({
+        srcSet: this.config.srcSet
+      })
     } else {
-      const retina = this.config.dpr > 1 && this.config.retina
-      this.setState({ src: retina || this.config.src })
+      const retina = this.config.devicePixelRatio > 1 && this.config.retina
+      this.setState({
+        src: retina || this.config.src
+      })
     }
 
     /**
@@ -55,13 +67,14 @@ export default class Layzr extends React.Component {
   }
 
   componentDidMount () {
-    this.config.node = findDOMNode(this)
+    if (!this.props.src) { return console.warn('Layzr requires a src value.') }
+
     this.config.srcSetEnabled = 'srcset' in document.createElement('img')
-    this.config.dpr = (window.devicePixelRatio ||
+    this.config.devicePixelRatio = (window.devicePixelRatio ||
       window.screen.deviceXDPI / window.screen.logicalXDPI)
 
     this.scroller = srraf.use(({ currY }) => {
-      if (inViewport(this.config.node, this.config.threshold, currY)) {
+      if (inViewport(findDOMNode(this), this.config.threshold, currY)) {
         this.setSource()
       }
     }).update()
