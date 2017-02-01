@@ -26,7 +26,7 @@ function inViewport (node, threshold, y) {
  * @param {string} [srcSet] valid HTML srcset value
  * @param {string} [retina] High DPI image (prefer srcSet)
  */
-export default class Layzr extends React.Component {
+export default class Relaze extends React.Component {
   constructor (props) {
     super(props)
 
@@ -37,7 +37,7 @@ export default class Layzr extends React.Component {
       src: this.props.src,
       threshold: this.props.threshold || 0,
       srcSet: this.props.srcSet || null,
-      retina: this.props.retina || null,
+      retina: this.props.retina || null
     }
 
     this.state = {}
@@ -67,7 +67,7 @@ export default class Layzr extends React.Component {
   }
 
   componentDidMount () {
-    if (!this.props.src) { return console.warn('Layzr requires a src value.') }
+    if (!this.props.src) { return console.warn('Relaze requires a src value.') }
 
     this.config.srcSetEnabled = 'srcset' in document.createElement('img')
     this.config.devicePixelRatio = (window.devicePixelRatio ||

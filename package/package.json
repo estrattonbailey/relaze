@@ -1,19 +1,22 @@
 {
-  "name": "react-layzr",
+  "name": "relaze",
   "version": "0.0.1",
-  "description": "A modern lazy loading library for images in React projects.",
+  "description": "A modern image lazy loading library for React.",
   "main": "dist/index.js",
   "license": "MIT",
-  "repository": "https://github.com/estrattonbailey/react-layzr",
+  "repository": "https://github.com/estrattonbailey/relaze",
   "author": "estrattonbailey",
   "scripts": {
     "lint": "standard 'index.js'",
     "prebuild": "npm run lint",
-    "build": "babel index.js -d dist/",
-    "watch": "babel -w index.js -d dist/",
+    "build": "NODE_ENV=production babel index.js -d dist/",
+    "watch": "NODE_ENV=development babel -w --no-comments index.js -d dist/",
     "prepublish": "npm run build"
   },
-  "keywords": [],
+  "keywords": [
+    "react",
+    "lazy load"
+  ],
   "devDependencies": {
     "babel-core": "^6.21.0",
     "babel-preset-babili": "0.0.10",

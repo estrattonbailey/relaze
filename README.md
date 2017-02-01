@@ -1,24 +1,24 @@
-# react-layzr
-**WIP**
+# relaze
+1kb image lazy loading library for React.
 
 ## Usage
 Basic, no fade in, normal `img` tag:
 ```javascript
 import React from 'react'
-import Layzr from 'react-layzr'
+import Lazy from 'relaze'
 
 export const ImageStandard = ({ ...props }) => (
   <figure className="image image--standard mx0 relative bg-gray2">
-    <Layzr {...props}>
+    <Lazy {...props}>
       <img className="absolute fit-x fill-h fill-v"/>
-    </Layzr>
+    </Lazy>
   </figure>
 )
 ```
 Wait for load event, add class to fade in:
 ```javascript
 import React from 'react'
-import Layzr from 'react-layzr'
+import Lazy from 'relaze'
 
 class Img extends React.Component {
   constructor(props) {
@@ -46,16 +46,16 @@ class Img extends React.Component {
 
 export const ImageStandard = ({ ...props }) => (
   <figure className="image image--standard mx0 relative bg-gray2">
-    <Layzr {...props}>
+    <Lazy {...props}>
       <Img/>
-    </Layzr>
+    </Lazy>
   </figure>
 )
 ```
 Usage for background images:
 ```javascript
 import React from 'react'
-import Layzr from 'react-layzr'
+import Lazy from 'relaze'
 
 const Img = props => {
   // bg image, only needs src
@@ -67,9 +67,9 @@ const Img = props => {
 
 export const ImageStandard = ({ ...props }) => (
   <figure className="image image--standard mx0 relative bg-gray2">
-    <Layzr {...props}>
+    <Lazy {...props}>
       <Img/>
-    </Layzr>
+    </Lazy>
   </figure>
 )
 ```
