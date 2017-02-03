@@ -7,7 +7,8 @@
 1. Uses [srraf](https://github.com/estrattonbailey/srraf) for performant scrolling using `requestAnimationFrame`
 2. Supports `srcset` and hi-dpi displays, in addition to default `src`
 3. Extremely flexible API leaves implementation up to the developer
-4. Sooper small 😎
+4. Supports server environments and SSR
+5. Sooper small 😎
 
 Inspired by [layzr.js](https://github.com/callmecavs/layzr.js).
 
@@ -114,9 +115,9 @@ If you want to support hi-res displays explicitly without support for `srcset`, 
   <img/>
 </Lazy>
 ```
-If `DPI >= 1`, this will render:
+If `DPI > 1`, this will render:
 ```html
-<img srcset="image-large.jpg"/>
+<img src="image-large.jpg"/>
 ```
 
 ### threshold
@@ -129,6 +130,11 @@ Threshold is the pixel value above or below the viewport that the image loads. P
 
 ## Browser Support
 TODO, but should work in all evergreen browsers and IE 10+.
+
+## Prior Art
+1. [react-lazy](https://github.com/merri/react-lazy) - SEO friendly universal (isomorphic) lazy loader component, by [@merri](https://github.com/merri/react-lazy).
+2. [react-lazy-load](https://github.com/loktar00/react-lazy-load) - React component that renders children elements when they enter the viewport, by [@loktar00](https://github.com/loktar00)
+3. [react-lazyload](https://github.com/jasonslyvia/react-lazyload) - Lazyload your Component, Image or anything matters the performance, by [@jasonslyvia](https://github.com/jasonslyvia/react-lazyload)
 
 ## Example
 To run the example, clone this repo, then:
