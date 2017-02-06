@@ -1,6 +1,6 @@
 {
   "name": "relaze",
-  "version": "0.0.1",
+  "version": "0.0.2",
   "description": "A modern image lazy loading library for React.",
   "main": "dist/index.js",
   "license": "MIT",
