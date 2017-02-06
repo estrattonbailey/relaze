@@ -34,7 +34,7 @@ export default class Relaze extends React.Component {
      * Store values sep from state
      */
     this.config = {
-      threshold: this.props.threshold || 0,
+      threshold: this.props.threshold || 0
     }
 
     this.state = {}
