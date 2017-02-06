@@ -34,47 +34,60 @@ export default class Relaze extends React.Component {
      * Store values sep from state
      */
     this.config = {
-      src: this.props.src,
       threshold: this.props.threshold || 0,
-      srcSet: this.props.srcSet || null,
-      retina: this.props.retina || null
     }
 
     this.state = {}
   }
 
-  setSource () {
+  setSource (props = this.props) {
+    let temp = {}
+
     /**
      * Prioritize srcset, retina, src
      */
-    if (this.config.srcSetEnabled && this.config.srcSet) {
-      this.setState({
-        srcSet: this.config.srcSet
-      })
+    if (this.config.srcSetEnabled && props.srcSet) {
+      temp = {
+        srcSet: props.srcSet
+      }
     } else {
-      const retina = this.config.devicePixelRatio > 1 && this.config.retina
-      this.setState({
-        src: retina || this.config.src
-      })
+      const dpr = (window.devicePixelRatio ||
+        window.screen.deviceXDPI / window.screen.logicalXDPI)
+      const retina = dpr > 1 && props.retina
+
+      temp = {
+        src: retina || props.src
+      }
     }
 
-    /**
-     * Remove handler
-     */
-    if (this.scroller) {
-      this.scroller.destroy()
+    if (temp.src || temp.srcSet) {
+      this.setState(temp)
+
+      console.log(temp)
+
+      /**
+       * Remove handler
+       */
+      if (this.scroller) {
+        this.scroller.destroy()
+      }
+    }
+  }
+
+  componentDidUpdate (prev) {
+    if (this.scroller && (this.props.src !== prev.src || this.props.srcSet !== prev.srcSet)) {
+      this.scroller.update()
     }
   }
 
   componentDidMount () {
     if (!this.props.src) { console.warn('Relaze requires a src value.') }
 
+    this.ref = findDOMNode(this)
     this.config.srcSetEnabled = 'srcset' in document.createElement('img')
-    this.config.devicePixelRatio = (window.devicePixelRatio ||
-      window.screen.deviceXDPI / window.screen.logicalXDPI)
 
     this.scroller = srraf.use(({ currY }) => {
-      if (inViewport(findDOMNode(this), this.config.threshold, currY)) {
+      if (inViewport(this.ref, this.config.threshold, currY)) {
         this.setSource()
       }
     }).update()
