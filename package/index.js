@@ -63,8 +63,6 @@ export default class Relaze extends React.Component {
     if (temp.src || temp.srcSet) {
       this.setState(temp)
 
-      console.log(temp)
-
       /**
        * Remove handler
        */
