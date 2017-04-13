@@ -3,6 +3,14 @@ import { findDOMNode } from 'react-dom'
 import srraf from 'srraf'
 
 /**
+ * Poor-mans object-assign
+ */
+const merge = (target, ...args) => args.reduce((target, arg) => {
+  Object.keys(arg).forEach(k => { target[k] = arg[k] })
+  return target
+}, target)
+
+/**
  * @param {HTMLElement} node
  * @param {number} threshold Pixels outside viewport to fire
  * @param {number} y Current page scroll position
@@ -102,6 +110,6 @@ export default class Relaze extends React.Component {
   }
 
   render () {
-    return React.cloneElement(this.props.children, this.state)
+    return React.cloneElement(this.props.children, merge({}, this.props.children.props || {}, this.state))
   }
 }
