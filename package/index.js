@@ -1,3 +1,4 @@
+/* eslint-disable */
 import React from 'react'
 import { findDOMNode } from 'react-dom'
 import srraf from 'srraf'
@@ -76,12 +77,51 @@ export default class Relaze extends React.Component {
        */
       if (this.scroller) {
         this.scroller.destroy()
+        this.scroller = null
       }
     }
   }
 
-  componentDidUpdate (prev) {
-    if (this.scroller && (this.props.src !== prev.src || this.props.srcSet !== prev.srcSet)) {
+  init () {
+    /**
+     * Clear previous image data
+     */
+    this.setState({ src: null, srcSet: null })
+
+    /**
+     * Remove old event handler, if exists
+     */
+    this.scroller && this.scroller.destroy()
+
+    /**
+     * Get new ref
+     */
+    this.ref = findDOMNode(this)
+
+    /**
+     * Bind a new scroll handler
+     */
+    this.scroller = srraf.use(({ currY }) => {
+      if (inViewport(this.ref, this.config.threshold, currY)) {
+        this.setSource()
+      }
+    }).update()
+  }
+
+  componentWillReceiveProps (newProps) {
+    /**
+     * If props have changed without unmounting
+     */
+    if (
+      this.props.src !== newProps.src
+      || this.props.srcSet !== newProps.srcSet 
+      || this.props.retina !== newProps.retina
+    ) {
+      /**
+       * Re-initiate scroll binding with new data
+       */
+      this.init()
+    } else if (this.scroller) {
       this.scroller.update()
     }
   }
@@ -89,14 +129,12 @@ export default class Relaze extends React.Component {
   componentDidMount () {
     if (!this.props.src) { console.warn('Relaze requires a src value.') }
 
-    this.ref = findDOMNode(this)
     this.config.srcSetEnabled = 'srcset' in document.createElement('img')
 
-    this.scroller = srraf.use(({ currY }) => {
-      if (inViewport(this.ref, this.config.threshold, currY)) {
-        this.setSource()
-      }
-    }).update()
+    /**
+     * Set up initial scroll binding
+     */
+    this.init()
   }
 
   componentWillUnmount () {
