@@ -104,9 +104,9 @@ export default class Relaze extends React.Component {
      * If props have changed without unmounting
      */
     if (
-      this.props.src !== newProps.src
-      || this.props.srcSet !== newProps.srcSet 
-      || this.props.retina !== newProps.retina
+      this.props.src !== newProps.src ||
+      this.props.srcSet !== newProps.srcSet ||
+      this.props.retina !== newProps.retina
     ) {
       /**
        * Re-initiate scroll binding with new data
