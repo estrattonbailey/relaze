@@ -1,15 +1,6 @@
-/* eslint-disable */
 import React from 'react'
 import { findDOMNode } from 'react-dom'
 import srraf from 'srraf'
-
-/**
- * Poor-mans object-assign
- */
-const merge = (target, ...args) => args.reduce((target, arg) => {
-  Object.keys(arg).forEach(k => { target[k] = arg[k] })
-  return target
-}, target)
 
 /**
  * @param {HTMLElement} node
@@ -148,6 +139,6 @@ export default class Relaze extends React.Component {
   }
 
   render () {
-    return React.cloneElement(this.props.children, merge({}, this.props.children.props || {}, this.state))
+    return React.cloneElement(this.props.children, {...(this.props.children.props || {}), ...this.state})
   }
 }
