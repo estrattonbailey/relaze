@@ -1,0 +1,35 @@
+{
+  "name": "relaze",
+  "version": "1.0.1",
+  "description": "A modern image lazy loading library for React.",
+  "source": "index.js",
+  "module": "dist/relaze.es.js",
+  "main": "dist/relaze.js",
+  "umd:main": "dist/relaze.umd.js",
+  "files": [
+    "dist"
+  ],
+  "scripts": {
+    "build": "microbundle build --jsx React.createElement",
+    "watch": "microbundle watch --compress=false --jsx React.createElement"
+  },
+  "license": "MIT",
+  "repository": "https://github.com/estrattonbailey/relaze",
+  "author": "estrattonbailey",
+  "keywords": [
+    "react",
+    "lazy load"
+  ],
+  "dependencies": {
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0",
+    "srraf": "^1.0.1"
+  },
+  "peerDependencies": {
+    "react": "^16.2.0",
+    "react-dom": "^16.2.0"
+  },
+  "devDependencies": {
+    "microbundle": "^0.4.4"
+  }
+}
