@@ -66,8 +66,8 @@ export default function lazy (Component) {
       /**
        * Bind a new scroll handler
        */
-      this.scroller = srraf.use(({ currY }) => {
-        if (inViewport(this.ref, this.config.threshold, currY)) {
+      this.scroller = srraf(({ y }) => {
+        if (inViewport(this.ref, this.config.threshold, y)) {
           this.setSource()
         }
       }).update()

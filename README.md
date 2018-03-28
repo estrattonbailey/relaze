@@ -1,5 +1,5 @@
 # relaze
-Tiny image lazy loading library for React. **1.3kb gzipped**.
+Tiny image lazy loading library for React. **800 bytes gzipped**.
 
 ## Features
 1. Single higher-order component
