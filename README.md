@@ -76,11 +76,11 @@ export default relaze(({ src }) => (
 ))
 ```
 ### Adjusting Threshold
-Positive values makes image load sooner, negative values makes image load later.
+A fraction of the viewport height. Positive values makes image load sooner, negative values makes image load later.
 ```javascript
 import Image from './Image.js'
 
-<Image src='image.jpg' threshold={100} />
+<Image src='image.jpg' threshold={0.2} />
 ```
 
 ## License
