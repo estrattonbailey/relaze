@@ -2,6 +2,26 @@ import React from 'react'
 import { findDOMNode } from 'react-dom'
 import srraf from 'srraf'
 
+function pick (src, pick) {
+  let keys = Object.keys(src)
+
+  let picked = {}
+  let rest = {}
+
+  for (let i = 0; i < keys.length; i++) {
+    if (pick.indexOf(keys[i]) > -1) {
+      picked[keys[i]] = src[keys[i]]
+    } else {
+      rest[keys[i]] = src[keys[i]]
+    }
+  }
+
+  return {
+    picked,
+    rest
+  }
+}
+
 /**
  * @param {HTMLElement} node
  * @param {number} threshold Pixels outside viewport to fire
@@ -10,7 +30,7 @@ import srraf from 'srraf'
 function inViewport (node, threshold, y) {
   const nodeTop = node.getBoundingClientRect().top + y
   const nodeBot = nodeTop + node.offsetHeight
-  const offset = (threshold / 100) * window.innerHeight
+  const offset = threshold * window.innerHeight
   return (nodeBot >= y - offset) && (nodeTop <= (y + window.innerHeight) + offset)
 }
 
@@ -24,19 +44,13 @@ export default function lazy (Component) {
     constructor (props) {
       super(props)
 
-      /**
-       * Store values sep from state
-       */
-      this.config = {
-        threshold: this.props.threshold || 0
-      }
+      this.setConfig()
 
       this.state = {}
     }
 
     setSource () {
-      const { srcSetEnabled } = this.config
-      const { src, srcSet } = this.props
+      const { src, srcSet, srcSetEnabled } = this.options
 
       const props = { src }
 
@@ -47,53 +61,52 @@ export default function lazy (Component) {
       if (src || srcSet) {
         this.setState(props)
       }
-
-      this.cleanup()
     }
 
-    init () {
-      /**
-       * Clear previous image data
-       */
-      this.setState({ src: null, srcSet: null })
+    setConfig () {
+      const { picked, rest } = pick(
+        Object.assign({}, this.props, {
+          threshold: this.props.threshold || 0
+        }),
+        [ 'threshold', 'src', 'srcSet' ]
+      )
 
+      this.options = picked
+      this.rest = rest
+    }
 
-      /**
-       * Get new ref
-       */
-      this.ref = findDOMNode(this)
+    update (y = window.pageYOffset) {
+      const visible = inViewport(findDOMNode(this), this.options.threshold, y)
 
-      /**
-       * Bind a new scroll handler
-       */
-      this.scroller = srraf(({ y }) => {
-        if (inViewport(this.ref, this.config.threshold, y)) {
-          this.setSource()
-        }
-      }).update()
+      visible && this.setSource()
+
+      return visible
     }
 
     cleanup () {
       this.scroller && this.scroller.destroy()
     }
 
-    componentWillReceiveProps (props) {
-      const { src, srcSet } = this.props
+    componentDidMount () {
+      this.options.srcSetEnabled = 'srcset' in document.createElement('img')
+
+      if (!this.update()) {
+        this.scroller = srraf(({ y }) => {
+          if (this.update(y)) this.cleanup()
+        }).update()
+      }
+    }
+
+    componentDidUpdate (props) {
+      const { src, srcSet } = this.options
 
       /**
        * If props have changed without unmounting,
        * re-initiate scroll binding with new data
        */
       if (src !== props.src || srcSet !== props.srcSet) {
-        this.init()
-      } else if (this.scroller) {
-        this.scroller.update()
+        this.setConfig()
       }
-    }
-
-    componentDidMount () {
-      this.config.srcSetEnabled = 'srcset' in document.createElement('img')
-      this.init()
     }
 
     componentWillUnmount () {
@@ -101,7 +114,7 @@ export default function lazy (Component) {
     }
 
     render () {
-      return <Component {...this.props} {...this.state} />
+      return <Component {...this.rest} {...this.state} />
     }
   }
 }
