@@ -1,6 +1,6 @@
 {
   "name": "relaze",
-  "version": "2.1.0",
+  "version": "2.1.1",
   "description": "A modern image lazy loading library for React.",
   "source": "index.js",
   "module": "dist/relaze.es.js",
